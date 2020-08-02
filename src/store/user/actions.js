@@ -7,11 +7,10 @@ export async function setOption({ commit, state }, { db, payload }) {
 }
 
 export async function seedOptions({ commit, state }, db) {
-  const user = await getUser(db);
-  if (!user) {
-    const seeded = await db.user.insert(state);
-    return;
-  }
+  let user = await getUser(db);
+  if (!user) user = await db.user.insert(state);
+  commit("seed", user);
+  console.log({ user });
 }
 
 const getUser = async db => {

@@ -33,11 +33,13 @@ export const getLastEntry = async db => {
 };
 
 export const insertEntry = async (db, data) => {
+  console.log(JSON.stringify(data, null, 2));
   const res = await db.insert({
     text: data.text,
     html: data.html,
     tags: [],
-    charCount: data.text.length
+    charCount: data.text.length,
+    window: data.activeWindow
   });
   return res;
 };

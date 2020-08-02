@@ -79,7 +79,13 @@ module.exports = function(/* ctx */) {
     framework: {
       iconSet: "material-icons", // Quasar icon set
       lang: "en-us", // Quasar language pack
-      config: {},
+      config: {
+        notify: {
+          color: "cyan-9",
+          textColor: "white",
+          position: "bottom-right"
+        }
+      },
 
       // Possible values for "importStrategy":
       // * 'auto' - (DEFAULT) Auto-import needed Quasar components & directives
@@ -94,7 +100,7 @@ module.exports = function(/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: []
+      plugins: ["Notify"]
     },
 
     // animations: 'all', // --- includes all animations

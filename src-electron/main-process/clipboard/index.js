@@ -1,5 +1,6 @@
 import { clipboard } from "electron";
 import * as db from "../database";
+import * as active from "../window";
 
 export const watcher = async (dbInstance, win) => {
   return setInterval(async () => {
@@ -10,7 +11,8 @@ export const watcher = async (dbInstance, win) => {
       (text && text !== "" && last.length > 0 && text !== last[0].text) ||
       last.length === 0
     ) {
-      await db.insertEntry(dbInstance, { text, html }, win);
+      const activeWindow = await active.getWin();
+      await db.insertEntry(dbInstance, { text, html, activeWindow }, win);
       win.webContents.send("newClipAdded", text);
       return;
     }

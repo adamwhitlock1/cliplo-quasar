@@ -3,6 +3,7 @@
     <div v-if="stream.length > 0" class="full-width">
       <div class="row justify-between items-center q-pa-sm bg-cyan-1">
         <div class="col text-teal-800">Total entries: {{ stream.length }}</div>
+        <div>{{ format }}</div>
         <div class="col justify-end flex">
           <q-btn
             outline
@@ -29,7 +30,7 @@
         class="row flex items-center p-3 rounded-lg m-3 border-b-4 border border-gray-200 entry-wrapper"
       >
         <div class="col items-center justify-start">
-          <div class="m-0 text-blue-grey-7">
+          <div class="m-0 text-blue-grey-7 flex items-center">
             <q-chip icon="event"
               >{{ formatDate(item.createdAt) }} |
               {{ item.charCount }} Chars</q-chip
@@ -43,10 +44,17 @@
               @click="copy(item.text)"
               size="xs"
             />
+            <p class="italic text-sm text-gray-600">
+              via: {{ item.window.owner.name }} | {{ item.window.title }}
+            </p>
           </div>
-          <div class="m-0 px-3 text-gray-700">
+          <div v-if="format === 'text'" class="m-0 px-3 text-gray-700">
             {{ item.text }}
           </div>
+          <div class="rounded mt-2" v-else v-html="item.html"></div>
+          <button v-if="item.window.url" @click="openLink(item.window.url)">
+            {{ item.window.url }}
+          </button>
         </div>
 
         <div class="col-auto flex justify-end">
@@ -60,8 +68,8 @@
 </template>
 
 <script>
-const { ipcRenderer } = require("electron");
-import { mapActions } from "vuex";
+const { ipcRenderer, shell } = require("electron");
+import { mapActions, mapState } from "vuex";
 import { date } from "quasar";
 export default {
   name: "PageIndex",
@@ -69,6 +77,9 @@ export default {
     return {
       stream: []
     };
+  },
+  computed: {
+    ...mapState("user", ["format"])
   },
   methods: {
     ...mapActions("user", ["setOption"]),
@@ -79,15 +90,10 @@ export default {
       });
     },
     copy(text) {
-      this.$copyText(text).then(
-        function(e) {
-          console.log(e);
-        },
-        function(e) {
-          alert("Can not copy");
-          console.log(e);
-        }
-      );
+      this.$copyText(text).then(e => {
+        this.$q.notify("Copied to Clipboard!");
+        console.log(e);
+      });
     },
     async clearClipStream() {
       try {
@@ -110,6 +116,9 @@ export default {
     },
     formatDate(timeStamp) {
       return date.formatDate(timeStamp, "MMM Do h:m:s a");
+    },
+    openLink(target) {
+      shell.openExternal(target);
     }
   },
   async created() {
