@@ -4,7 +4,22 @@
   </div>
 </template>
 <script>
+import { mapActions } from "vuex";
 export default {
-  name: "App"
+  name: "App",
+  created() {
+    this.seedOptions(this.$db);
+  },
+  methods: {
+    ...mapActions("user", ["seedOptions"])
+  }
 };
 </script>
+
+<style>
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+</style>

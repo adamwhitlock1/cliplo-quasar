@@ -32,11 +32,12 @@ export const getLastEntry = async db => {
   }
 };
 
-export const insertEntry = async (db, entry) => {
+export const insertEntry = async (db, data) => {
   const res = await db.insert({
-    text: entry,
+    text: data.text,
+    html: data.html,
     tags: [],
-    charCount: entry.length
+    charCount: data.text.length
   });
   return res;
 };

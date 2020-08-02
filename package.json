@@ -19,6 +19,8 @@
     "nedb": "^1.8.0",
     "nedb-promises": "^4.0.4",
     "quasar": "^1.0.0",
+    "tailwindcss": "^1.6.1",
+    "vue-clipboard2": "^0.3.1",
     "worker-plugin": "^4.0.3"
   },
   "devDependencies": {

@@ -3,15 +3,16 @@ import * as db from "../database";
 
 export const watcher = async (dbInstance, win) => {
   return setInterval(async () => {
-    const clip = clipboard.readText();
+    const text = clipboard.readText();
+    const html = clipboard.readHTML();
     const last = await db.getLastEntry(dbInstance);
     if (
-      (clip !== "" && clip && last.length > 0 && clip !== last[0].text) ||
+      (text && text !== "" && last.length > 0 && text !== last[0].text) ||
       last.length === 0
     ) {
-      await db.insertEntry(dbInstance, clip, win);
-      win.webContents.send("newClipAdded", clip);
+      await db.insertEntry(dbInstance, { text, html }, win);
+      win.webContents.send("newClipAdded", text);
       return;
     }
-  }, 1000);
+  }, 500);
 };
