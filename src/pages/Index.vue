@@ -3,16 +3,14 @@
     <div v-if="stream.length > 0" class="full-width">
       <div class="row justify-between items-center q-pa-sm bg-cyan-1">
         <div class="col text-teal-800">Total entries: {{ stream.length }}</div>
-        <div>{{ format }}</div>
-        <div class="col justify-end flex">
-          <q-btn
-            outline
-            rounded
-            color="cyan-9"
-            @click.prevent="clearClipStream"
-            label="Clear Entries"
-            icon="delete_forever"
-          />
+        <div class="col justify-end flex items-center">
+          <button
+            @click.prevent="doClearStream"
+            class="flex items-center px-3 py-1 border text-teal-600 border-teal-600 rounded-full"
+          >
+            <q-icon class="w-6 h-6" size="sm" name="delete_forever" />Clear All
+            Entries
+          </button>
           <q-btn
             outline
             rounded
@@ -20,112 +18,50 @@
             color="cyan-9"
             @click.prevent="testAction"
             label="Test Action"
-            icon="delete_forever"
           />
         </div>
       </div>
-      <div
-        v-for="item in stream"
-        :key="item.id"
-        class="row flex items-center p-3 rounded-lg m-3 border-b-4 border border-gray-200 entry-wrapper"
-      >
-        <div class="col items-center justify-start">
-          <div class="m-0 text-blue-grey-7 flex items-center">
-            <q-chip icon="event"
-              >{{ formatDate(item.createdAt) }} |
-              {{ item.charCount }} Chars</q-chip
-            >
-            <q-btn
-              round
-              flat
-              color="blue-grey-4"
-              icon="content_copy"
-              class="entry-copy"
-              @click="copy(item.text)"
-              size="xs"
-            />
-            <p class="italic text-sm text-gray-600">
-              via: {{ item.window.owner.name }} | {{ item.window.title }}
-            </p>
-          </div>
-          <div v-if="format === 'text'" class="m-0 px-3 text-gray-700">
-            {{ item.text }}
-          </div>
-          <div class="rounded mt-2" v-else v-html="item.html"></div>
-          <button v-if="item.window.url" @click="openLink(item.window.url)">
-            {{ item.window.url }}
-          </button>
-        </div>
-
-        <div class="col-auto flex justify-end">
-          <q-btn flat round color="red" icon="favorite" />
-          <q-btn flat round color="teal" icon="bookmark" />
-          <q-btn flat round color="primary" icon="share" />
-        </div>
-      </div>
+      <clip-list v-if="stream.length > 0" :items="stream" />
+    </div>
+    <div v-else>
+      <q-inner-loading>
+        <q-spinner-gears size="50px" color="primary" />
+      </q-inner-loading>
     </div>
   </q-page>
 </template>
 
 <script>
-const { ipcRenderer, shell } = require("electron");
 import { mapActions, mapState } from "vuex";
-import { date } from "quasar";
+
+import ClipList from "components/clip/ClipList";
+
 export default {
   name: "PageIndex",
-  data() {
-    return {
-      stream: []
-    };
+  components: {
+    ClipList
   },
   computed: {
-    ...mapState("user", ["format"])
+    ...mapState("clip", ["stream"])
   },
   methods: {
     ...mapActions("user", ["setOption"]),
+    ...mapActions("clip", ["clearStream"]),
+    doClearStream() {
+      this.$q.loading.show({
+        delay: 0 // ms
+      });
+      setTimeout(() => {
+        this.clearStream(this.$db);
+        this.$q.loading.hide();
+      }, 700);
+    },
     testAction() {
       this.setOption({
         db: this.$db,
         payload: { option: "format", value: "html" }
       });
-    },
-    copy(text) {
-      this.$copyText(text).then(e => {
-        this.$q.notify("Copied to Clipboard!");
-        console.log(e);
-      });
-    },
-    async clearClipStream() {
-      try {
-        const removed = await this.$db.stream.remove({}, { multi: true });
-        console.log({ removed });
-        this.stream = [];
-      } catch (err) {
-        console.log("ERROR LOADING CLIP STREAM");
-        console.log(err);
-      }
-    },
-
-    async getClipStream() {
-      try {
-        this.stream = await this.$db.stream.find({}).sort({ createdAt: -1 });
-      } catch (err) {
-        console.log("ERROR LOADING CLIP STREAM");
-        console.log(err);
-      }
-    },
-    formatDate(timeStamp) {
-      return date.formatDate(timeStamp, "MMM Do h:m:s a");
-    },
-    openLink(target) {
-      shell.openExternal(target);
     }
-  },
-  async created() {
-    this.getClipStream();
-    ipcRenderer.on("newClipAdded", () => {
-      this.getClipStream();
-    });
   }
 };
 </script>

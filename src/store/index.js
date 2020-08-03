@@ -1,23 +1,16 @@
 import Vue from "vue";
 import Vuex from "vuex";
 
+import clip from "./clip";
 import user from "./user";
 
 Vue.use(Vuex);
 
-/*
- * If not building with SSR mode, you can
- * directly export the Store instantiation;
- *
- * The function below can be async too; either use
- * async/await or return a Promise which resolves
- * with the Store instance.
- */
-
-export default function(/* { ssrContext } */) {
+export default () => {
   const Store = new Vuex.Store({
     modules: {
-      user
+      user,
+      clip
     },
     state: {},
 
@@ -27,4 +20,4 @@ export default function(/* { ssrContext } */) {
   });
 
   return Store;
-}
+};

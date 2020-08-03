@@ -84,6 +84,10 @@ module.exports = function(/* ctx */) {
           color: "cyan-9",
           textColor: "white",
           position: "bottom-right"
+        },
+        loading: {
+          spinnerColor: "cyan-1",
+          backgroundColor: "cyan-10"
         }
       },
 
@@ -100,12 +104,12 @@ module.exports = function(/* ctx */) {
       // directives: [],
 
       // Quasar plugins
-      plugins: ["Notify"]
+      plugins: ["Notify", "Loading"]
     },
 
     // animations: 'all', // --- includes all animations
     // https://quasar.dev/options/animations
-    animations: [],
+    animations: "all",
 
     // https://quasar.dev/quasar-cli/developing-ssr/configuring-ssr
     ssr: {
