@@ -10,7 +10,6 @@ export const seedOptions = async ({ commit, state }, db) => {
   let user = await getUser(db);
   if (!user) user = await db.user.insert(state);
   commit("seed", user);
-  console.log({ user });
 };
 
 const getUser = async db => {

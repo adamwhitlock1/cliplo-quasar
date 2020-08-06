@@ -11,9 +11,8 @@ export const watcher = async (dbInstance, win) => {
       (text && text !== "" && last.length > 0 && text !== last[0].text) ||
       last.length === 0
     ) {
-      const activeWindow = await active.getWin();
-      await db.insertEntry(dbInstance, { text, html, activeWindow }, win);
-      win.webContents.send("newClipAdded", text);
+      const window = await active.getWin();
+      await db.insertEntry(dbInstance, { text, html, window }, win);
       return;
     }
   }, 500);

@@ -4,8 +4,9 @@ export default ({ Vue }) => {
   const currentWindow = remote.getCurrentWindow();
   const {
     cliplo: {
-      db: { saved, stream, user }
+      db: { saved, stream, user, insertEntry }
     }
   } = currentWindow;
-  Vue.prototype.$db = { saved, stream, user };
+  Vue.prototype.$db = { saved, stream, user, insertEntry };
+  Vue.prototype.$electronWindow = currentWindow;
 };

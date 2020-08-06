@@ -46,7 +46,10 @@ function createWindow() {
       // Change from /quasar.conf.js > electron > nodeIntegration;
       // More info: https://quasar.dev/quasar-cli/developing-electron-apps/node-integration
       nodeIntegration: process.env.QUASAR_NODE_INTEGRATION,
-      nodeIntegrationInWorker: process.env.QUASAR_NODE_INTEGRATION
+      nodeIntegrationInWorker: process.env.QUASAR_NODE_INTEGRATION,
+      enableRemoteModule: true,
+      transparent: true,
+      backgroundColor: "#50FFFFFF"
 
       // More info: /quasar-cli/developing-electron-apps/electron-preload-script
       // preload: path.resolve(__dirname, 'electron-preload.js')
@@ -58,7 +61,8 @@ function createWindow() {
     db: {
       saved: db.dbFactory("saved.db"),
       stream: db.dbFactory("stream.db"),
-      user: db.dbFactory("user.db")
+      user: db.dbFactory("user.db"),
+      insertEntry: db.insertEntry
     }
   };
 

@@ -56,11 +56,13 @@ export default {
         this.$q.loading.hide();
       }, 700);
     },
-    testAction() {
-      this.setOption({
-        db: this.$db,
-        payload: { option: "format", value: "html" }
-      });
+    async testAction() {
+      this.$electronWindow.webContents.send("newMessage", { text: "dude" });
+
+      // this.setOption({
+      //   db: this.$db,
+      //   payload: { option: "format", value: "html" }
+      // });
     }
   }
 };

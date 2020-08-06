@@ -4,7 +4,7 @@
       <div class="m-0 pl-2 text-blue-grey-7 flex items-center">
         <p
           class="font-bold text-xs text-gray-500 flex items-center"
-          v-if="getClipWindowData(item)"
+          v-if="getClipWindowData(item).hasData"
         >
           <q-icon size="xs" name="source" class="mr-1 text-gray-400" />
           {{ getClipWindowData(item).window }}
@@ -46,59 +46,10 @@
       class="w-1/4 flex content-center flex-wrap justify-center items-center"
     >
       <div class="w-full flex justify-center items-center mt-0">
-        <q-btn
-          flat
-          size="sm"
-          color="red"
-          icon="delete"
-          @click="removeItem(item)"
-          v-if="index !== 0"
-        />
-        <q-btn
-          flat
-          size="sm"
-          color="accent"
-          icon="share"
-          @click="openLink(createCarbonLink(item.text))"
-        >
-          <q-tooltip
-            transition-show="scale"
-            transition-hide="scale"
-            anchor="top middle"
-            self="center middle"
-            content-class="bg-purple-600"
-          >
-            share via carbon.now.sh
-          </q-tooltip>
-        </q-btn>
-        <q-btn flat size="sm" color="teal" icon="save">
-          <q-tooltip
-            transition-show="scale"
-            transition-hide="scale"
-            anchor="top middle"
-            self="center middle"
-            content-class="bg-green-600"
-          >
-            save to archive
-          </q-tooltip>
-        </q-btn>
-        <q-btn
-          flat
-          size="sm"
-          color="primary"
-          icon="content_copy"
-          @click="copy(item.text)"
-        >
-          <q-tooltip
-            transition-show="scale"
-            transition-hide="scale"
-            anchor="top middle"
-            self="center middle"
-            content-class="bg-blue-600"
-          >
-            copy to clipboard
-          </q-tooltip>
-        </q-btn>
+        <btn-delete :index="index" :item="item" />
+        <btn-carbon :item="item" />
+        <btn-save :item="item" />
+        <btn-copy :item="item" />
       </div>
       <div class="w-full flex text-xs justify-center items-center mt-2">
         <p class="bg-indigo-100 text-gray-600 px-3 rounded-full">
@@ -110,9 +61,12 @@
 </template>
 
 <script>
-import { shell } from "electron";
-import { mapState, mapActions } from "vuex";
+import { mapState } from "vuex";
 import { date } from "quasar";
+import BtnDelete from "components/clip/BtnDelete";
+import BtnCarbon from "components/clip/BtnCarbon";
+import BtnSave from "components/clip/BtnSave";
+import BtnCopy from "components/clip/BtnCopy";
 export default {
   props: {
     item: {
@@ -124,38 +78,38 @@ export default {
       required: true
     }
   },
+  components: {
+    BtnDelete,
+    BtnCarbon,
+    BtnSave,
+    BtnCopy
+  },
   computed: {
     ...mapState("user", ["format"])
   },
   methods: {
-    ...mapActions("clip", ["remove"]),
     getClipWindowData(item) {
-      const url = item.window.url || false;
       if (item.window && item.window.owner) {
-        const window = `${item.window.owner.name} | ${item.window.title}`;
+        const window = `${item.window.owner.name} ${
+          item.window.title ? "|" : item.window.title
+        } ${item.window.title}`;
+
         return {
+          hasData: true,
           window: window.length > 90 ? `${window.substring(0, 90)}...` : window,
-          url
+          url: item.window.url
         };
       }
-      return false;
-    },
-    createCarbonLink(text) {
-      return encodeURI(`https://carbon.now.sh/?code=${text}`);
+      return {
+        hadData: false,
+        message: window.stdout
+      };
     },
     formatDate(timeStamp) {
       return date.formatDate(timeStamp, "MMM Do h:m a");
     },
     openLink(target) {
       shell.openExternal(target);
-    },
-    copy(text) {
-      this.$copyText(text).then(e => {
-        this.$q.notify("Copied to Clipboard!");
-      });
-    },
-    async removeItem(item) {
-      this.remove({ db: this.$db, item });
     }
   }
 };

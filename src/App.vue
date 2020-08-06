@@ -14,6 +14,10 @@ export default {
     ipcRenderer.on("newClipAdded", () => {
       this.stream(this.$db);
     });
+    ipcRenderer.on("newMessage", (event, message) => {
+      console.log("message received");
+      console.log({ message });
+    });
   },
   methods: {
     ...mapActions("user", ["seedOptions"]),

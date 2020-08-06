@@ -27,19 +27,19 @@ export const getLastEntry = async db => {
     // catches errors both in fetch and response.json
     console.log("ERROR GETTING LAST DB ITEM");
     console.log({ err });
-
     return err;
   }
 };
 
-export const insertEntry = async (db, data) => {
+export const insertEntry = async (db, data, win) => {
   console.log(JSON.stringify(data, null, 2));
   const res = await db.insert({
     text: data.text,
     html: data.html,
     tags: [],
     charCount: data.text.length,
-    window: data.activeWindow
+    window: data.window
   });
+  win.webContents.send("newClipAdded", data.text);
   return res;
 };
