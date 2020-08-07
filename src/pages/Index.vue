@@ -2,6 +2,10 @@
   <q-page expand class="flex ">
     <div v-if="stream.length > 0" class="full-width">
       <div class="row justify-between items-center q-pa-sm bg-cyan-1">
+        <div class="flex">
+          <input type="text" placeholder="search by text" v-model="queryText" />
+          <button @click="search">search</button>
+        </div>
         <div class="col text-teal-800">Total entries: {{ stream.length }}</div>
         <div class="col justify-end flex items-center">
           <button
@@ -41,12 +45,20 @@ export default {
   components: {
     ClipList
   },
+  data() {
+    return {
+      queryText: ""
+    };
+  },
   computed: {
     ...mapState("clip", ["stream"])
   },
   methods: {
     ...mapActions("user", ["setOption"]),
-    ...mapActions("clip", ["clearStream"]),
+    ...mapActions("clip", ["clearStream", "searchStream"]),
+    search() {
+      this.searchStream({ queryText: this.queryText, db: this.$db });
+    },
     doClearStream() {
       this.$q.loading.show({
         delay: 0 // ms

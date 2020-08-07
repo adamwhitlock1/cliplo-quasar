@@ -66,6 +66,8 @@ function createWindow() {
     }
   };
 
+  mainWindow.cliplo.db.stream.ensureIndex({ fieldName: "text" });
+
   mainWindowState.manage(mainWindow);
   mainWindow.loadURL(process.env.APP_URL);
 

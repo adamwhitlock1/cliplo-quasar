@@ -18,11 +18,10 @@ export const stream = async ({ commit }, db) => {
   }
 };
 
-export const remove = async ({ commit }, { db, item }) => {
+export const remove = async ({ dispatch }, { db, item }) => {
   try {
     await db.stream.remove({ _id: item._id }, {});
-    const res = await getAllStream(db);
-    commit("stream", res);
+    dispatch("stream", db);
   } catch (err) {
     console.log("ERROR REMOVING CLIP");
     console.log(err);
@@ -43,6 +42,20 @@ export const clearStream = async (context, db) => {
     const firstClip = await first(db);
     await db.stream.remove({ $not: { _id: firstClip._id } }, { multi: true });
     context.dispatch("stream", db);
+  } catch (err) {
+    console.log("ERROR CLEARING CLIP STREAM");
+    console.log(err);
+  }
+};
+
+export const searchStream = async ({ commit }, { queryText, db }) => {
+  try {
+    const results = await db.stream.find({
+      text: { $regex: new RegExp(queryText) }
+    });
+    console.log({ results });
+
+    commit("stream", results);
   } catch (err) {
     console.log("ERROR CLEARING CLIP STREAM");
     console.log(err);
