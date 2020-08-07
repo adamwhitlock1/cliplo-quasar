@@ -4,8 +4,15 @@
       <div class="m-0 pl-1 text-blue-grey-7 flex items-center">
         <clip-window-details :item="item" />
       </div>
-      <div class="rounded mt-2 py-2 px-3 bg-white text-gray-700 border">
+      <div
+        class="rounded mt-2 py-2 px-3 bg-white text-gray-700 border break-all"
+      >
         {{ item.text }}
+      </div>
+      <div class="w-full flex items-center p-1">
+        <span class="text-gray-600 text-xs mr-1" v-if="item.tags.length > 0"
+          >Tags: </span
+        ><clip-tags :tags="item.tags" />
       </div>
     </div>
 
@@ -31,6 +38,7 @@
 import { mapState } from "vuex";
 import { date } from "quasar";
 import ClipWindowDetails from "components/clip/ClipWindowDetails";
+import ClipTags from "components/clip/ClipTags";
 import BtnDelete from "components/clip/BtnDelete";
 import BtnCarbon from "components/clip/BtnCarbon";
 import BtnSave from "components/clip/BtnSave";
@@ -48,6 +56,7 @@ export default {
   },
   components: {
     ClipWindowDetails,
+    ClipTags,
     BtnDelete,
     BtnCarbon,
     BtnSave,

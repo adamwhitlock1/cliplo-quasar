@@ -2,12 +2,19 @@
   <q-page expand class="flex ">
     <div v-if="stream.length > 0" class="full-width">
       <div class="row justify-between items-center q-pa-sm bg-cyan-1">
-        <div class="flex">
-          <input type="text" placeholder="search by text" v-model="queryText" />
-          <button @click="search">search</button>
+        <div class="flex items-center">
+          <input
+            type="text"
+            class="px-3 py-2 border rounded"
+            placeholder="search by text"
+            v-model="queryText"
+            @keyup.enter="search"
+          />
         </div>
-        <div class="col text-teal-800">Total entries: {{ stream.length }}</div>
         <div class="col justify-end flex items-center">
+          <div class="text-teal-800 mr-2">
+            Total entries: {{ stream.length }}
+          </div>
           <button
             @click.prevent="doClearStream"
             class="flex items-center px-3 py-1 border text-teal-600 border-teal-600 rounded-full"

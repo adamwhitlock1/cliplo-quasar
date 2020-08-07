@@ -1,6 +1,7 @@
 import { app } from "electron";
 import fs from "fs";
 import Datastore from "nedb-promises";
+import { getFileFormatTags } from "./tagging";
 
 export const dirFactory = name => {
   const folderPath = `${app.getPath("home")}/${name}`;
@@ -33,10 +34,12 @@ export const getLastEntry = async db => {
 
 export const insertEntry = async (db, data, win) => {
   console.log(JSON.stringify(data, null, 2));
+  const fileFormatTags = getFileFormatTags(data.window);
+
   const res = await db.insert({
     text: data.text,
     html: data.html,
-    tags: [],
+    tags: fileFormatTags,
     charCount: data.text.length,
     window: data.window
   });

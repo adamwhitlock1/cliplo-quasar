@@ -4,7 +4,7 @@
       <div
         v-for="(item, index) in items"
         :key="item._id"
-        class="flex items-center pl-3 py-2 rounded-lg my-3 mx-2 border-b-2 border-t-2 border border-gray-400 shadow-md"
+        class="flex items-center pl-3 py-2 rounded-lg my-3 mx-2 border-b-2 border-t-2 border border-gray-400 bg-white"
       >
         <clip-entry :item="item" :index="index" />
       </div>
