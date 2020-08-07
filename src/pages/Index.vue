@@ -22,14 +22,14 @@
             <q-icon class="w-6 h-6" size="sm" name="delete_forever" />Clear All
             Entries
           </button>
-          <q-btn
+          <!-- <q-btn
             outline
             rounded
             size=""
             color="cyan-9"
             @click.prevent="testAction"
             label="Test Action"
-          />
+          /> -->
         </div>
       </div>
       <clip-list v-if="stream.length > 0" :items="stream" />
