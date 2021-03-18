@@ -1,7 +1,9 @@
 import { app, BrowserWindow, nativeTheme, powerSaveBlocker } from "electron";
 import * as db from "./database";
 import * as clip from "./clipboard";
+
 // import * as activeWin from './window'
+import { machineIdSync } from "node-machine-id";
 
 const windowStateKeeper = require("electron-window-state");
 
@@ -56,12 +58,16 @@ function createWindow() {
     }
   });
 
+  // machineEncryptionKey used for encrypting the databases
+  const machineEncryptionKey = machineIdSync();
+
   // initialize dbs and bind them to the window for passing to renderer
   mainWindow.cliplo = {
     db: {
-      saved: db.dbFactory("saved.db"),
-      stream: db.dbFactory("stream.db"),
-      user: db.dbFactory("user.db"),
+      saved: db.dbFactory("saved.db", machineEncryptionKey),
+      stream: db.dbFactory("stream.db", machineEncryptionKey),
+      user: db.dbFactory("user.db", machineEncryptionKey),
+      tags: db.dbFactory("tags.db", machineEncryptionKey),
       insertEntry: db.insertEntry
     }
   };

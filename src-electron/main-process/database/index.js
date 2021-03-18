@@ -2,18 +2,42 @@ import { app } from "electron";
 import fs from "fs";
 import Datastore from "nedb-promises";
 import { getFileFormatTags, getApplicationContextTags } from "./tagging";
+import crypto from "crypto";
 
 export const dirFactory = name => {
   const folderPath = `${app.getPath("home")}/${name}`;
   fs.mkdirSync(folderPath, { recursive: true });
 };
 
-export const dbFactory = fileName => {
+export const dbFactory = (fileName, encryptionKey) => {
+  let algorithm = "aes-256-cbc"; // you can choose many algorithm from supported openssl
+  let secret = encryptionKey || "none";
+  let key = crypto
+    .createHash("sha256")
+    .update(String(secret))
+    .digest("base64")
+    .substr(0, 32);
   const filePath = `${app.getPath("home")}/.cliplo/${fileName}`;
   return Datastore.create({
     filename: filePath,
     timestampData: true,
-    autoload: true
+    autoload: true,
+    afterSerialization(plaintext) {
+      const iv = crypto.randomBytes(16);
+      const aes = crypto.createCipheriv(algorithm, key, iv);
+      let ciphertext = aes.update(plaintext);
+      ciphertext = Buffer.concat([iv, ciphertext, aes.final()]);
+      return ciphertext.toString("base64");
+    },
+    beforeDeserialization(ciphertext) {
+      const ciphertextBytes = Buffer.from(ciphertext, "base64");
+      const iv = ciphertextBytes.slice(0, 16);
+      const data = ciphertextBytes.slice(16);
+      const aes = crypto.createDecipheriv(algorithm, key, iv);
+      let plaintextBytes = Buffer.from(aes.update(data));
+      plaintextBytes = Buffer.concat([plaintextBytes, aes.final()]);
+      return plaintextBytes.toString();
+    }
   });
 };
 

@@ -11,7 +11,8 @@ export default {
   created() {
     this.seedOptions(this.$db);
     this.stream(this.$db);
-    ipcRenderer.on("newClipAdded", () => {
+    ipcRenderer.on("newClipAdded", (event, message) => {
+      console.log({ message });
       this.stream(this.$db);
     });
     ipcRenderer.on("newMessage", (event, message) => {
